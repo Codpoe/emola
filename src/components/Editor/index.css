@@ -1,0 +1,10 @@
+.bn-inline-content:has(>.ProseMirror-trailingBreak):before {
+  color: hsl(var(--muted-foreground));
+  font-style: normal;
+}
+
+.ssr-editor {
+  font-family: var(--bn-font-family);
+  font-variant-ligatures: none;
+  -webkit-font-smoothing: antialiased;
+}
