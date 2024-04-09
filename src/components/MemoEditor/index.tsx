@@ -3,30 +3,9 @@ import { Button, Input, Label, Popover } from 'shadcn-react';
 import { CheckIcon, HashIcon, SendHorizontalIcon } from 'shadcn-react/icons';
 import { Editor } from '../Editor';
 import { db } from '@/models/db';
-import { IBlock, IEditor } from '@/hooks/useEditor';
+import { IEditor } from '@/hooks/useEditor';
+import { trimDoc, trimDocText } from '@/utils';
 import './index.css';
-
-function trimDoc(doc?: IBlock[]): IBlock[] {
-  if (!doc?.length) {
-    return [];
-  }
-
-  let i = doc.length - 1;
-
-  while (i >= 0) {
-    if (
-      doc[i].type === 'paragraph' &&
-      !doc[i].children.length &&
-      !(doc[i].content as any)?.length
-    ) {
-      i--;
-    } else {
-      break;
-    }
-  }
-
-  return doc.slice(0, i + 1);
-}
 
 export function MemoEditor() {
   const editorRef = useRef<IEditor>();
@@ -71,6 +50,7 @@ export function MemoEditor() {
         await db.putMemo({
           createdAt: new Date(),
           content,
+          contentText: trimDocText(editorRef.current.domElement.innerText),
           deleted: 0,
         });
 

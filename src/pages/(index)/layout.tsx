@@ -8,7 +8,7 @@ export default function Layout() {
     <div>
       <header className="w-screen h-16 sticky top-0 bg-background/80 backdrop-blur z-20">
         <div className="max-w-5xl h-full mx-auto px-6 flex items-center">
-          <h1 className="px-7 text-lg text-primary font-semibold">Emola</h1>
+          <h1 className="px-7 text-lg text-foreground font-semibold">Emola</h1>
           <a
             className="ml-auto"
             href="https://flomoapp.com/"

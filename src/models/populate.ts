@@ -88,6 +88,7 @@ export async function populate() {
         children: [],
       },
     ],
+    contentText: `#碎碎念👋，我亲爱的朋友emola是仿flomo的极简备忘录，帮你快速记录一些想法、灵感、emo时刻，帮助你更好地管理自己的时间和记忆。应用的数据完全存储在你的浏览器本地，不会上传到任何服务器上，也不会与任何第三方共享你的数据。快去试试吧~如有问题，欢迎在github上联系我。`,
     deleted: 0,
   });
 }

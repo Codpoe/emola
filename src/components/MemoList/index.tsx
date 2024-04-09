@@ -13,7 +13,7 @@ export function MemoList(props: MemoListProps) {
     return (
       <div className="flex flex-col items-center mt-6">
         <span className="text-4xl">🫥</span>
-        <h3 className="mt-2 text-sm text-primary font-semibold">No memos</h3>
+        <h3 className="mt-2 text-sm text-foreground font-semibold">No memos</h3>
       </div>
     );
   }

@@ -5,6 +5,7 @@ export interface Memo {
   createdAt: Date;
   updatedAt: Date;
   content: IBlock[];
+  contentText: string;
   tags?: string[];
   deleted: 0 | 1;
 }
