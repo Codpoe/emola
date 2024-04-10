@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { BlockNoteView } from '@blocknote/react';
 import { cn } from '../../utils';
+import { useTheme } from '../ThemeProvider';
 import { useEditor, IEditor, IPartialBlock } from '@/hooks/useEditor';
 import '@blocknote/react/style.css';
 import './index.css';
@@ -13,6 +14,7 @@ interface ClientEditorProps {
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onChange?: () => void;
 }
 
 const PLACEHOLDER = '输入“/”使用命令';
@@ -24,13 +26,15 @@ function ClientEditor(props: ClientEditorProps) {
     className,
     children,
     getEditor,
+    onChange,
     ...restProps
   } = props;
+  const { themeConfig } = useTheme();
 
   const getEditorRef = useRef(getEditor);
   getEditorRef.current = getEditor;
 
-  const editor = useEditor({ initialContent });
+  const editor = useEditor({ initialContent }, []);
 
   useEffect(() => {
     getEditorRef.current?.(editor);
@@ -45,6 +49,10 @@ function ClientEditor(props: ClientEditorProps) {
       )}
       editable={editable}
       editor={editor}
+      theme={themeConfig.mode}
+      onChange={() => {
+        onChange?.();
+      }}
     >
       {children}
     </BlockNoteView>

@@ -8,3 +8,7 @@
   font-variant-ligatures: none;
   -webkit-font-smoothing: antialiased;
 }
+
+.bn-editor {
+  background-color: hsl(var(--background));
+}

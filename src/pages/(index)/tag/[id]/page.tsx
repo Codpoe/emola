@@ -37,8 +37,19 @@ export default function Page() {
   }, [id, deferredSearchValue]);
 
   return (
-    <div className="">
-      <MemoEditor />
+    <div key={id} className="">
+      <MemoEditor
+        initialContent={
+          typeof id !== 'undefined'
+            ? [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'tag', props: { name: id } }],
+                },
+              ]
+            : undefined
+        }
+      />
       <div className="h-16 mt-1.5 flex items-center">
         <h2 className="flex items-center text-base text-muted-foreground font-bold">
           #{id}

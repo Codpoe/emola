@@ -3,23 +3,20 @@ import { Button, Input, Label, Popover } from 'shadcn-react';
 import { CheckIcon, HashIcon, SendHorizontalIcon } from 'shadcn-react/icons';
 import { Editor } from '../Editor';
 import { db } from '@/models/db';
-import { IEditor } from '@/hooks/useEditor';
+import { IEditor, IPartialBlock } from '@/hooks/useEditor';
 import { trimDoc, trimDocText } from '@/utils';
 import './index.css';
 
-export function MemoEditor() {
+export interface MemoEditorProps {
+  initialContent?: IPartialBlock[];
+}
+
+export function MemoEditor(props: MemoEditorProps) {
+  const { initialContent } = props;
   const editorRef = useRef<IEditor>();
   const insertTagBtnRef = useRef<HTMLButtonElement>(null);
   const [hasContent, setHasContent] = useState(false);
   const [tagName, setTagName] = useState<string>('');
-
-  const getEditor = (editor: IEditor) => {
-    editorRef.current = editor;
-
-    editor.onEditorContentChange(() => {
-      setHasContent(Boolean(trimDoc(editor.document).length));
-    });
-  };
 
   const handleInsertTag = () => {
     if (!editorRef.current || !tagName) {
@@ -64,8 +61,14 @@ export function MemoEditor() {
       className="memo-editor pb-11 border border-input shadow-sm rounded-md"
       ssr
       ssrClassName="h-[118px] px-[18px] py-[9px] border border-input shadow-sm rounded-md"
-      getEditor={getEditor}
       sideMenu={false}
+      initialContent={initialContent}
+      getEditor={editor => {
+        editorRef.current = editor;
+      }}
+      onChange={() => {
+        setHasContent(Boolean(trimDoc(editorRef.current?.document).length));
+      }}
     >
       <div className="absolute h-11 bottom-0 left-0 right-0 px-1.5 z-[1] flex items-center">
         <Popover
