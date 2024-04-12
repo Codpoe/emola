@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Label, Popover } from 'shadcn-react';
 import { CheckIcon, HashIcon, SendHorizontalIcon } from 'shadcn-react/icons';
 import { Editor } from '../Editor';
@@ -8,11 +8,18 @@ import { trimDoc, trimDocText } from '@/utils';
 import './index.css';
 
 export interface MemoEditorProps {
+  memoId?: number;
   initialContent?: IPartialBlock[];
+  autoFocus?: boolean;
+  showCancelBtn?: boolean;
+  onCancel?: () => void;
+  onSend?: () => void;
 }
 
 export function MemoEditor(props: MemoEditorProps) {
-  const { initialContent } = props;
+  const { memoId, initialContent, autoFocus, showCancelBtn, onCancel, onSend } =
+    props;
+
   const editorRef = useRef<IEditor>();
   const insertTagBtnRef = useRef<HTMLButtonElement>(null);
   const [hasContent, setHasContent] = useState(false);
@@ -45,16 +52,21 @@ export function MemoEditor(props: MemoEditorProps) {
 
       if (content.length) {
         await db.putMemo({
-          createdAt: new Date(),
+          id: memoId,
           content,
           contentText: trimDocText(editorRef.current.domElement.innerText),
           deleted: 0,
         });
 
         editorRef.current?.removeBlocks(editorRef.current.document);
+        onSend?.();
       }
     }
   };
+
+  useEffect(() => {
+    setHasContent(Boolean(trimDoc(editorRef.current?.document).length));
+  }, []);
 
   return (
     <Editor
@@ -62,6 +74,7 @@ export function MemoEditor(props: MemoEditorProps) {
       ssr
       ssrClassName="h-[118px] px-[18px] py-[9px] border border-input shadow-sm rounded-md"
       sideMenu={false}
+      autoFocus={autoFocus}
       initialContent={initialContent}
       getEditor={editor => {
         editorRef.current = editor;
@@ -105,14 +118,16 @@ export function MemoEditor(props: MemoEditorProps) {
             icon={<HashIcon className="max-w-3.5 max-h-3.5" />}
           />
         </Popover>
-        <Button
-          className="ml-auto"
-          disabled={!hasContent}
-          size="sm"
-          onClick={handleSend}
-        >
-          <SendHorizontalIcon className="w-4 h-4" />
-        </Button>
+        <div className="ml-auto flex items-center space-x-1.5">
+          {showCancelBtn && (
+            <Button variant="ghost" size="sm" onClick={onCancel}>
+              取消
+            </Button>
+          )}
+          <Button disabled={!hasContent} size="sm" onClick={handleSend}>
+            <SendHorizontalIcon className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
     </Editor>
   );

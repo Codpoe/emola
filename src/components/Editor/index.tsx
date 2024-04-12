@@ -10,6 +10,7 @@ interface ClientEditorProps {
   editable?: boolean;
   initialContent?: IPartialBlock[];
   sideMenu?: boolean;
+  autoFocus?: boolean;
   getEditor?: (editor: IEditor) => void;
   children?: React.ReactNode;
   className?: string;

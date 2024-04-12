@@ -15,20 +15,42 @@ export class MemoDB extends Dexie {
     });
   }
 
-  async putMemo(memo: Omit<Memo, 'updatedAt'> & { updatedAt?: Date }) {
+  async putMemo(
+    memo: Omit<Memo, 'createdAt' | 'updatedAt'> & {
+      createdAt?: Date;
+      updatedAt?: Date;
+    }
+  ) {
     // 从 memo 中解析 tags
     const tags = this.extractTags(memo.content || []);
 
-    // 更新 memos
+    const existing = memo.id ? await this.memos.get(memo.id) : undefined;
+    const existingTags = existing?.tags || [];
+    const tagsToDelete = existingTags.filter(x => !tags.includes(x));
+    const tagsToAdd = tags.filter(x => !existingTags.includes(x));
+
+    // 更新 memo
     await this.memos.put({
+      createdAt: new Date(),
+      ...existing,
       ...memo,
       updatedAt: new Date(),
       tags,
     });
 
     // 更新 tags
-    await Promise.all(
-      tags.map(async tag => {
+    await Promise.all([
+      ...tagsToDelete.map(async tag => {
+        const existing = await this.tags.get(tag);
+
+        if (existing) {
+          await this.tags.update(tag, {
+            updatedAt: new Date(),
+            memoCount: existing.memoCount - 1,
+          });
+        }
+      }),
+      ...tagsToAdd.map(async tag => {
         const existing = await this.tags.get(tag);
 
         if (existing) {
@@ -44,8 +66,8 @@ export class MemoDB extends Dexie {
             memoCount: 1,
           });
         }
-      })
-    );
+      }),
+    ]);
   }
 
   async deleteMemo(id: number) {
